@@ -171,6 +171,27 @@ def update_book(user_book_id):
 
     return redirect(url_for('my_shelf'))
 
+@app.route('/delete_book/<int:user_book_id>', methods=['POST'])
+@login_required
+def delete_book(user_book_id):
+    # Encontra o livro na estante do usuário ou retorna erro 404
+    book_to_delete = UserBook.query.get_or_404(user_book_id)
+
+    # Verificação de segurança: garante que o livro pertence ao usuário logado
+    if book_to_delete.user_id != current_user.id:
+        flash('Operação não permitida.', 'danger')
+        return redirect(url_for('my_shelf'))
+    
+    # Guarda o título para a mensagem antes de deletar
+    book_title = book_to_delete.book.title
+
+    # Deleta o registro do banco de dados
+    db.session.delete(book_to_delete)
+    db.session.commit()
+    
+    flash(f'"{book_title}" foi removido da sua estante.', 'success')
+    return redirect(url_for('my_shelf'))
+
 # --- Rota do Chatbot ---
 @app.route('/chatbot', methods=['GET', 'POST'])
 def chatbot():

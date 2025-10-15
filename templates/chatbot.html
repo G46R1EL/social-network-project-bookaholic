@@ -1,31 +1,32 @@
 {% extends "base.html" %}
-
 {% block content %}
-    <h2>Chatbot de Ajuda</h2>
-    <p>Olá! Sou o assistente do Bookaholic. Como posso te ajudar hoje?</p>
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title">Chatbot de Ajuda</h2>
+            <p class="card-text">Olá! Sou o assistente do Bookaholic. Como posso te ajudar hoje?</p>
 
-    <div id="chat-window" style="border: 1px solid #ccc; padding: 10px; height: 200px; overflow-y: scroll; margin-bottom: 10px; background-color: #f9f9f9;">
-        {% if question %}
-            <p><strong>Você:</strong> {{ question }}</p>
-            <p><strong>Bot:</strong> {{ answer }}</p>
-        {% else %}
-            <p><strong>Bot:</strong> Por favor, faça uma pergunta usando o campo abaixo ou clique em uma das sugestões.</p>
-        {% endif %}
+            <div id="chat-window" class="border rounded p-3 mb-3" style="height: 250px; overflow-y: scroll; background-color: #f8f9fa;">
+                {% if question %}
+                    <p><strong>Você:</strong> <span class="text-muted">{{ question }}</span></p>
+                    <p><strong>Bot:</strong> <span class="text-primary">{{ answer }}</span></p>
+                {% else %}
+                    <p><strong>Bot:</strong> <span class="text-primary">Por favor, faça uma pergunta usando o campo abaixo ou clique em uma das sugestões.</span></p>
+                {% endif %}
+            </div>
+
+            <form method="POST" action="" class="d-flex mb-4">
+                <input type="text" name="question" class="form-control me-2" placeholder="Digite sua pergunta aqui...">
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </form>
+
+            <div class="list-group">
+                <h4 class="list-group-item list-group-item-action active" aria-current="true">Perguntas Sugeridas:</h4>
+                {% for q in available_questions %}
+                    <a href="#" class="list-group-item list-group-item-action" onclick="document.querySelector('input[name=question]').value='{{ q }}'; return false;">
+                        {{ q.capitalize() }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
     </div>
-
-    <form method="POST" action="">
-        <input type="text" name="question" size="50" placeholder="Digite sua pergunta aqui...">
-        <button type="submit">Enviar</button>
-    </form>
-
-    <hr>
-
-    <h4>Perguntas Sugeridas:</h4>
-    <ul>
-        {% for q in available_questions %}
-            {# Usamos um pouco de JavaScript para preencher o campo de texto ao clicar na sugestão #}
-            <li><a href="#" onclick="document.querySelector('input[name=question]').value='{{ q }}'; return false;">{{ q.capitalize() }}</a></li>
-        {% endfor %}
-    </ul>
-
 {% endblock %}

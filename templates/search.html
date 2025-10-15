@@ -1,35 +1,37 @@
 {% extends "base.html" %}
 {% block content %}
-    <h2>Buscar Livros</h2>
-    <form method="POST" action="">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.search_query.label }}<br>
-            {{ form.search_query(size=40) }}
-        </p>
-        <p>{{ form.submit() }}</p>
-    </form>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2 class="card-title">Buscar Livros</h2>
+            <form method="POST" action="" class="d-flex">
+                {{ form.hidden_tag() }}
+                {{ form.search_query(class="form-control me-2", placeholder="Buscar por Título ou Autor") }}
+                {{ form.submit(class="btn btn-success") }}
+            </form>
+        </div>
+    </div>
 
     <hr>
 
     <h3>Resultados da Busca</h3>
-    <div class="book-results">
+    <div class="row">
         {% if books %}
             {% for book in books %}
-                <div class="book-item" style="display: flex; align-items: flex-start; margin-bottom: 20px;">
-                    {% if book.thumbnail %}
-                        <img src="{{ book.thumbnail }}" alt="Capa do livro {{ book.title }}" style="margin-right: 15px;">
-                    {% else %}
-                        <div style="width: 128px; height: 192px; background-color: #f0f0f0; margin-right: 15px; text-align: center; line-height: 192px; color: #aaa;">Sem capa</div>
-                    {% endif %}
-                    <div>
-                        <h4>{{ book.title }}</h4>
-                        <p><strong>Autor(es):</strong> {{ book.authors|join(', ') }}</p>
-                        
-                        <form action="{{ url_for('add_book') }}" method="POST" style="margin-top: 10px;">
-                            <input type="hidden" name="google_id" value="{{ book.google_id }}">
-                            <button type="submit">Adicionar à Estante</button>
-                        </form>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 text-center">
+                        {% if book.thumbnail %}
+                            <img src="{{ book.thumbnail }}" class="card-img-top mx-auto mt-3" alt="Capa de {{ book.title }}" style="height: 200px; width: auto;">
+                        {% else %}
+                            <div class="d-flex align-items-center justify-content-center bg-secondary text-white mx-auto mt-3" style="height: 200px; width: 130px;">Sem capa</div>
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ book.title }}</h5>
+                            <p class="card-text"><small class="text-muted">{{ book.authors|join(', ') }}</small></p>
+                            <form action="{{ url_for('add_book') }}" method="POST" class="mt-auto">
+                                <input type="hidden" name="google_id" value="{{ book.google_id }}">
+                                <button type="submit" class="btn btn-sm btn-primary">Adicionar à Estante</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             {% endfor %}
