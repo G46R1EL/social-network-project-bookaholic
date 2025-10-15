@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Minha Estante</h2>
+    
+    {% if user_books %}
+        {% for user_book in user_books %}
+            <div class="book-item" style="display: flex; align-items: flex-start; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+                {% if user_book.book.thumbnail %}
+                    <img src="{{ user_book.book.thumbnail }}" alt="Capa do livro {{ user_book.book.title }}" style="margin-right: 15px;">
+                {% else %}
+                    <div style="width: 128px; height: 192px; background-color: #f0f0f0; margin-right: 15px; text-align: center; line-height: 192px; color: #aaa;">Sem capa</div>
+                {% endif %}
+                <div>
+                    <h4>{{ user_book.book.title }}</h4>
+                    <p><strong>Autor(es):</strong> {{ user_book.book.authors }}</p>
+                    <p><strong>Status:</strong> {{ user_book.status }}</p>
+                    <p><strong>Página atual:</strong> {{ user_book.current_page }}</p>
+                    </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Você ainda não adicionou nenhum livro à sua estante.</p>
+        <p>Vá para a página de <a href="{{ url_for('search') }}">busca</a> para começar!</p>
+    {% endif %}
+{% endblock %}

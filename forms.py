@@ -20,3 +20,7 @@ class LoginForm(FlaskForm):
     username = StringField('Usuário', validators=[DataRequired()])
     password = PasswordField('Senha', validators=[DataRequired()])
     submit = SubmitField('Login')
+
+class BookSearchForm(FlaskForm):
+    search_query = StringField('Buscar por Título ou Autor', validators=[DataRequired()])
+    submit = SubmitField('Buscar Livros')

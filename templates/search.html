@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Buscar Livros</h2>
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.search_query.label }}<br>
+            {{ form.search_query(size=40) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+
+    <hr>
+
+    <h3>Resultados da Busca</h3>
+    <div class="book-results">
+        {% if books %}
+            {% for book in books %}
+                <div class="book-item" style="display: flex; align-items: flex-start; margin-bottom: 20px;">
+                    {% if book.thumbnail %}
+                        <img src="{{ book.thumbnail }}" alt="Capa do livro {{ book.title }}" style="margin-right: 15px;">
+                    {% else %}
+                        <div style="width: 128px; height: 192px; background-color: #f0f0f0; margin-right: 15px; text-align: center; line-height: 192px; color: #aaa;">Sem capa</div>
+                    {% endif %}
+                    <div>
+                        <h4>{{ book.title }}</h4>
+                        <p><strong>Autor(es):</strong> {{ book.authors|join(', ') }}</p>
+                        
+                        <form action="{{ url_for('add_book') }}" method="POST" style="margin-top: 10px;">
+                            <input type="hidden" name="google_id" value="{{ book.google_id }}">
+                            <button type="submit">Adicionar à Estante</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Faça uma busca para ver os resultados aqui.</p>
+        {% endif %}
+    </div>
+{% endblock %}
