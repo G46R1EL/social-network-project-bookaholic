@@ -6,7 +6,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 
 # Importações do nosso projeto
 from models import db, login_manager, User, Book, UserBook
-from forms import RegistrationForm, LoginForm, BookSearchForm
+from forms import RegistrationForm, LoginForm, BookSearchForm, UpdateBookForm
 
 # --- CONFIGURAÇÃO BÁSICA ---
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -145,7 +145,59 @@ def add_book():
 def my_shelf():
     # Busca todos os livros da estante do usuário logado
     user_books = UserBook.query.filter_by(user_id=current_user.id).all()
-    return render_template('my_shelf.html', user_books=user_books)
+    return render_template('my_shelf.html', user_books=user_books, UpdateBookForm=UpdateBookForm)
+
+@app.route('/update_book/<int:user_book_id>', methods=['POST'])
+@login_required
+def update_book(user_book_id):
+    # Encontra o livro na estante do usuário
+    book_to_update = UserBook.query.get_or_404(user_book_id)
+
+    # Verifica se o livro realmente pertence ao usuário logado (segurança)
+    if book_to_update.user_id != current_user.id:
+        flash('Operação não permitida.', 'danger')
+        return redirect(url_for('my_shelf'))
+
+    form = UpdateBookForm()
+    # Populamos o formulário com os dados que vêm do POST request
+    if form.validate_on_submit():
+        book_to_update.status = form.status.data
+        book_to_update.current_page = form.current_page.data
+        db.session.commit()
+        flash(f'"{book_to_update.book.title}" atualizado com sucesso!', 'success')
+    else:
+        # Se houver erros de validação, podemos exibi-los
+        flash('Não foi possível atualizar o livro. Verifique os dados.', 'danger')
+
+    return redirect(url_for('my_shelf'))
+
+# --- Rota do Chatbot ---
+@app.route('/chatbot', methods=['GET', 'POST'])
+def chatbot():
+    # Nosso "banco de dados" de perguntas e respostas
+    qa_pairs = {
+        "como adiciono um livro?": "Para adicionar um livro, vá para a página 'Buscar Livros', pesquise pelo título ou autor e, nos resultados, clique no botão 'Adicionar à Estante'.",
+        "como vejo meus livros?": "Você pode ver todos os seus livros salvos clicando no link 'Minha Estante' na barra de navegação superior.",
+        "como mudo o status de um livro?": "Na sua estante, cada livro terá um formulário. Você pode selecionar o novo status (Lendo, Lido, etc.) e até anotar a página em que parou. Depois, clique em 'Atualizar'.",
+        "preciso estar logado para usar o site?": "Sim, para buscar e gerenciar sua estante de livros, você precisa criar uma conta e fazer o login."
+    }
+
+    question = None
+    answer = None
+
+    if request.method == 'POST':
+        # Pega a pergunta do formulário, converte para minúsculas para facilitar a correspondência
+        question = request.form.get('question', '').lower()
+        # Busca a resposta no dicionário. Se não encontrar, retorna uma resposta padrão.
+        answer = qa_pairs.get(question, "Desculpe, não entendi a sua pergunta. Tente uma das perguntas sugeridas.")
+        
+    # Passamos as perguntas disponíveis para o template para que o usuário saiba o que perguntar
+    available_questions = qa_pairs.keys()
+
+    return render_template('chatbot.html', 
+                           available_questions=available_questions, 
+                           question=question, 
+                           answer=answer)
 
 # --- EXECUÇÃO ---
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField
 from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
 from models import User
 
@@ -24,3 +24,12 @@ class LoginForm(FlaskForm):
 class BookSearchForm(FlaskForm):
     search_query = StringField('Buscar por Título ou Autor', validators=[DataRequired()])
     submit = SubmitField('Buscar Livros')
+
+class UpdateBookForm(FlaskForm):
+    status = SelectField('Status', choices=[
+        ('Quero Ler', 'Quero Ler'),
+        ('Lendo', 'Lendo'),
+        ('Lido', 'Lido')
+    ], validators=[DataRequired()])
+    current_page = IntegerField('Página Atual', default=0)
+    submit = SubmitField('Atualizar')
