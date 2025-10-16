@@ -10,7 +10,10 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('home') }}">Bookaholic</a>
+            <a class="navbar-brand" href="{{ url_for('home') }}">
+                <img src="{{ url_for('static', filename='images/logo6.png') }}" alt="Logo Bookaholic" width="30" height="30" class="d-inline-block align-text-top me-2">
+                Bookaholic
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -55,6 +58,12 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
+        {% if request.endpoint == 'home' %}
+        <div class="welcome-section text-center">
+            <h1 class="display-2 fw-bold">Bem-vindo(a) ao Bookaholic</h1>
+            <p class="lead fs-2">Sua estante virtual, simples e divertida.</p>
+        </div>
+        {% endif %}
 
         {% block content %}{% endblock %}
     </main>

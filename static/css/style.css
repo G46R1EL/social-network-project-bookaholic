@@ -3,3 +3,13 @@ body {
     background-size: 38%;
     background-repeat: repeat;
 }
+
+.welcome-section {
+    /* Aumenta o espaço acima do texto para empurrá-lo para baixo */
+    padding-top: 10rem; /* Ajuste este valor conforme necessário */
+    padding-bottom: 10rem;
+
+    /* Adiciona a sombra ao texto */
+    /* Formato: deslocamento-horizontal | deslocamento-vertical | esfumaçamento | cor */
+    text-shadow: 2px 2px 8px rgba(95, 95, 95, 0.9);
+}
